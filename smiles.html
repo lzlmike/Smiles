@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>SMILE!</title>    
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style type="text/css"> 
+
+
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var smiles = [
+        {r:50, x: 50, y:150}, 
+        {r:40, x: 150, y:100},
+        {r:30, x: 300, y:200}
+      ];
+
+      var w = 900, h = 900 ,pi=Math.PI;
+
+      function colorChange(){
+			var s="123456789ABCDEF";var color="#"	
+			for(var i=0;i<6;i++){
+				var num=Math.floor(Math.random()*15);
+				color+=s[num];
+			}
+			return color;			
+		}
+
+
+      /*circles.attr("cx", function(d){
+      			return d.x;
+      		})
+      		.attr("cy", function(d){
+      			return 400;
+      		})
+      		.attr("r", function(d){
+      			return d.r;
+      		})
+      		.attr("fill", "yellow");*/
+
+      var drag = d3.behavior.drag()
+        .on("drag", function(d,i) {
+            d.x += d3.event.dx
+            d.y += d3.event.dy
+            d3.select(this).attr("transform", function(d,i){
+                return "translate(" + [ d.x,d.y ] + ")"
+            })
+        });
+
+      function draw_face(t,y,name){
+      	var face = d3.select("#charts")
+            .append("svg:g")
+            .data([ {"x":t.x, "y":y} ])
+            .attr("transform", "translate(" + t.x + "," + y + ")")
+            .attr("class", name)
+            .call(drag);
+        //face.transition().style("fill","blue");
+
+      	var circles = face.append("circle")
+      	    .attr("cx", t.x )
+      		.attr("cy", t.y)
+      		.attr("r", t.r)		
+      		.attr("fill", "yellow")
+      		.transition().style("fill",colorChange()).duration(4000).attr("opacity",0.6)
+      		.transition().style("fill",colorChange()).duration(4000).attr("opacity",0.2)
+      		.transition().style("fill",colorChange()).duration(4000).attr("opacity",0.6)
+      		.transition().style("fill","yellow").duration(5000).attr("opacity",1);
+      	//circles.transition().attr("x",320);
+      
+      	var right_eye =face.append("rect")
+			.attr("x", t.x- 25*(t.r/50))
+      		.attr("y",  t.y-28*(t.r/50))
+      		.attr("width", t.r/50 * 14)
+      		.attr("height", t.r/50*26)
+      		.attr("fill", "black");
+
+      	var right_eye =face.append("rect")
+			.attr("x", t.x+ 11*(t.r/50))
+      		.attr("y",  t.y-28*(t.r/50))
+      		.attr("width", t.r/50 * 14)
+      		.attr("height", t.r/50*26)
+      		.attr("fill", "black");	
+    
+      	var arc = d3.svg.arc()
+        	.innerRadius(t.r/ 50 * 37)
+      		.outerRadius(t.r/ 50 * 43)
+      		.startAngle(90*(pi/180))
+      		.endAngle(270*(pi/180));
+
+      	var arcs = face.append("path")
+      		.attr("d", arc)
+      	 	.attr("fill", "black")
+      		.attr("transform", "translate("+t.x+"," +t.y+")");
+
+      	
+      }
+     
+       d3.select("body")
+        .append("svg:svg")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("id", "charts")
+     
+      
+      for(var i = 0; i < 3 ; i++){
+        var color = ["green","red","blue"];
+      	var tmp = smiles[i];
+      	draw_face(tmp,0,"face"+i);	
+      }
+
+    </script>
+  </body>
+</html>
